@@ -31,6 +31,24 @@ ufw::allow { 'ssh-on-specific-interface':
 }
 ```
 
+To reject certain connections:
+
+```puppet
+ufw::reject { 'reject-http':
+  port => '80'
+}
+
+ufw::reject { 'reject-ssh-from-untrusted':
+  port => '22',
+  from => '10.0.0.2'
+}
+
+ufw::reject { 'reject-ssh-on-specific-interface':
+  port      => '22',
+  interface => 'eth1'
+}
+```
+
 To disable all IPv6 connections, you have to initialize ufw class with following parameter:
 
 ```puppet
@@ -39,12 +57,17 @@ class { 'ufw':
 }
 ```
 
-To delete a rule, add `ensure => 'absent'` to the allow.
+To delete a rule, add `ensure => 'absent'` to the rule.
 
 ```puppet
 ufw::allow { 'ssh':
   ensure => 'absent',
   port   => '22'
+}
+
+ufw::reject { 'reject-http':
+  ensure => absent,
+  port   => '80'
 }
 ```
 
