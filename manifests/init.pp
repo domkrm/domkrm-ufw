@@ -33,15 +33,6 @@ class ufw (
     require => Package['ufw']
   }
 
-  # Define service
-  service { 'ufw':
-    ensure  => 'running',
-    enable  => true,
-    start   => '/lib/ufw/ufw-init start quiet',
-    stop    => '/lib/ufw/ufw-init stop',
-    require => Package['ufw']
-  }
-
   # Disable IPv6
   file_line { 'ufw-ipv6':
     line    => $_ipv6,
