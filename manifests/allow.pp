@@ -42,7 +42,7 @@ define ufw::allow (
 -A ufw-user-input${_interface_cmd} -p ${proto} --dport ${port}${_from_cmd} -j ACCEPT
 
   ",
-      order   => '02'
+      order   => $port
     }
 
     if $ufw::ipv6 and $from == '' {
@@ -55,7 +55,7 @@ define ufw::allow (
 -A ufw6-user-input${_interface_cmd} -p ${proto} --dport ${port} -j ACCEPT
 
   ",
-        order   => '02'
+        order   => $port
       }
 
     }

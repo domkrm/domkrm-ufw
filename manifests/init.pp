@@ -63,6 +63,7 @@ class ufw (
   concat { $user_rules_file:
     ensure => present,
     warn   => true,
+    mode   => '0640',
     notify => Exec['reload_ufw']
   }
   concat::fragment { "${user_rules_file}-header":
@@ -86,14 +87,12 @@ class ufw (
 :ufw-user-limit - [0:0]
 :ufw-user-limit-accept - [0:0]
 ### RULES ###
-
 ",
     order   => '01'
   }
   concat::fragment { "${user_rules_file}-footer":
     target  => $user_rules_file,
-    content => "
-### END RULES ###
+    content => "### END RULES ###
 
 ### LOGGING ###
 -A ufw-after-logging-input -j LOG --log-prefix \"[UFW BLOCK] \" -m limit --limit 3/min --limit-burst 10
@@ -110,7 +109,7 @@ class ufw (
 ### END RATE LIMITING ###
 COMMIT
 ",
-    order   => '03'
+    order   => '70000'
   }
 
   if ($ipv6) {
@@ -119,6 +118,7 @@ COMMIT
     concat { $user6_rules_file:
       ensure => present,
       warn   => true,
+      mode   => '0640',
       notify => Exec['reload_ufw']
     }
     concat::fragment { "${user6_rules_file}-header":
@@ -142,14 +142,12 @@ COMMIT
 :ufw6-user-limit - [0:0]
 :ufw6-user-limit-accept - [0:0]
 ### RULES ###
-
   ",
       order   => '01'
     }
     concat::fragment { "${user6_rules_file}-footer":
       target  => $user6_rules_file,
-      content => "
-### END RULES ###
+      content => "### END RULES ###
 
 ### LOGGING ###
 -A ufw6-after-logging-input -j LOG --log-prefix \"[UFW BLOCK] \" -m limit --limit 3/min --limit-burst 10
@@ -166,7 +164,7 @@ COMMIT
 ### END RATE LIMITING ###
 COMMIT
   ",
-      order   => '03'
+      order   => '70000'
     }
   }
 
