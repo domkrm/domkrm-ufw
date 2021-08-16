@@ -38,7 +38,7 @@ class ufw (
     line    => $_ipv6,
     match   => '^IPV6=',
     path    => '/etc/default/ufw',
-    notify  => Service['ufw'],
+    notify  => Exec['reload_ufw'],
     require => Package['ufw']
   }
 
