@@ -43,9 +43,9 @@ class ufw (
   }
 
   exec { 'reload_ufw':
-    command     => 'ufw reload',
+    command     => 'ufw --force enable && ufw reload',
     path        => $::path,
-    require     => Exec['ufw-enable'],
+    require     => Package['ufw'],
     refreshonly => true
   }
 
