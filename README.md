@@ -1,10 +1,10 @@
-UFW module for Puppet
-=====================
+# UFW module for Puppet
 
-Module for UFW (Uncomplicated Firewall) configuration.
+Module for UFW (Uncomplicated Firewall) configuration (incoming connections).
 
-Usage
------
+## Usage
+
+_All not defined rules will be automatically purged!_
 
 To have Puppet install UFW, include the ufw class.
 This will install the UFW package, deny all incoming connections and enable UFW.
@@ -51,8 +51,4 @@ ufw::allow { 'ssh':
 Allow this to successfully run on all your machines at least once before removing it,
 in order to assure that the rule is gone.
 
-
-Limitations
------------
-
-Currently it is not possible to purge unmanaged rules.
+_All not defined rules will be automatically purged!_
