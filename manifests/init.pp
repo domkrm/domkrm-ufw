@@ -51,11 +51,14 @@ class ufw (
   }
 
   if $purge_user_defined_rules {
-    exec { 'ufw_purge':
-      command => 'ufw --force reset && ufw reload',
-      unless  => 'ufw status | grep -q "ALLOW"',
-      path    => $::path,
-      require => Package['ufw']
+    file { '/etc/ufw/user.rules':
+      ensure => present,
+      source => 'puppet:///modules/ufw/default-user.rules'
+    }
+
+    file { '/etc/ufw/user6.rules':
+      ensure => present,
+      source => 'puppet:///modules/ufw/default-user6.rules'
     }
   }
 
