@@ -146,7 +146,7 @@ class ufw (
 
 ### CUSTOM RULES ###
 ",
-    order   => 0
+    order   => '0'
   }
   concat::fragment { "${user_rules_file}-footer":
     target  => $user_rules_file,
@@ -156,7 +156,7 @@ class ufw (
 # don't delete the 'COMMIT' line or these rules won't be processed
 COMMIT
 ",
-    order   => 70000
+    order   => '99999'
   }
 
   if ($ipv6) {
@@ -312,7 +312,7 @@ COMMIT
 
 ### CUSTOM RULES ###
 ",
-      order   => 0
+      order   => '0'
     }
     concat::fragment { "${user6_rules_file}-footer":
       target  => $user6_rules_file,
@@ -322,7 +322,7 @@ COMMIT
 # don't delete the 'COMMIT' line or these rules won't be processed
 COMMIT
 ",
-      order   => 70000
+      order   => '99999'
     }
   }
 
