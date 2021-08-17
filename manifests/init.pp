@@ -53,12 +53,14 @@ class ufw (
   if $purge_user_defined_rules {
     file { '/etc/ufw/user.rules':
       ensure => present,
-      source => 'puppet:///modules/ufw/default-user.rules'
+      source => 'puppet:///modules/ufw/default-user.rules',
+      notify => Exec['reload_ufw']
     }
 
     file { '/etc/ufw/user6.rules':
       ensure => present,
-      source => 'puppet:///modules/ufw/default-user6.rules'
+      source => 'puppet:///modules/ufw/default-user6.rules',
+      notify => Exec['reload_ufw']
     }
   }
 
