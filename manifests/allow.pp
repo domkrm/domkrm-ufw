@@ -39,7 +39,8 @@ define ufw::allow (
       target  => $ufw::user_rules_file,
       content => "
 ### tuple ### allow ${proto} ${port} 0.0.0.0/0 any ${_from} in${_interface}
--A ufw-before-input${_interface_cmd} -p ${proto} --dport ${port}${_from_cmd} -j ACCEPT",
+-A ufw-before-input${_interface_cmd} -p ${proto} --dport ${port}${_from_cmd} -j ACCEPT
+",
       order   => $port
     }
 

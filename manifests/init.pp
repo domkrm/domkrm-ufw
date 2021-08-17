@@ -52,7 +52,7 @@ class ufw (
 
   if $purge_user_defined_rules {
     exec { 'ufw_purge':
-      command => 'ufw --force reset',
+      command => 'ufw --force reset && ufw reload',
       unless  => 'ufw status | grep -q "ALLOW"',
       path    => $::path,
       require => Package['ufw']
@@ -146,7 +146,7 @@ class ufw (
 
 ### CUSTOM RULES ###
 ",
-    order   => '01'
+    order   => 0
   }
   concat::fragment { "${user_rules_file}-footer":
     target  => $user_rules_file,
@@ -154,12 +154,13 @@ class ufw (
 ### END CUSTOM RULES ###
 
 # don't delete the 'COMMIT' line or these rules won't be processed
-COMMIT",
-    order   => '70000'
+COMMIT
+",
+    order   => 70000
   }
 
   if ($ipv6) {
-    $user6_rules_file = '/etc/ufw/user6.rules'
+    $user6_rules_file = '/etc/ufw/before6.rules'
 
     concat { $user6_rules_file:
       ensure => present,
@@ -311,7 +312,7 @@ COMMIT",
 
 ### CUSTOM RULES ###
 ",
-      order   => '01'
+      order   => 0
     }
     concat::fragment { "${user6_rules_file}-footer":
       target  => $user6_rules_file,
@@ -319,8 +320,9 @@ COMMIT",
 ### END CUSTOM RULES ###
 
 # don't delete the 'COMMIT' line or these rules won't be processed
-COMMIT",
-      order   => '70000'
+COMMIT
+",
+      order   => 70000
     }
   }
 
