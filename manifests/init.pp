@@ -84,7 +84,8 @@ class ufw (
   }
   concat::fragment { "${user_rules_file}-footer":
     target  => $user_rules_file,
-    content => "### END RULES ###
+    content => "
+### END RULES ###
 
 ### LOGGING ###
 -A ufw-after-logging-input -j LOG --log-prefix \"[UFW BLOCK] \" -m limit --limit 3/min --limit-burst 10
@@ -115,8 +116,7 @@ COMMIT
     }
     concat::fragment { "${user6_rules_file}-header":
       target  => $user6_rules_file,
-      content => "
-*filter
+      content => "*filter
 :ufw6-user-input - [0:0]
 :ufw6-user-output - [0:0]
 :ufw6-user-forward - [0:0]
@@ -133,13 +133,13 @@ COMMIT
 :ufw6-logging-allow - [0:0]
 :ufw6-user-limit - [0:0]
 :ufw6-user-limit-accept - [0:0]
-### RULES ###
-  ",
+### RULES ###",
       order   => '01'
     }
     concat::fragment { "${user6_rules_file}-footer":
       target  => $user6_rules_file,
-      content => "### END RULES ###
+      content => "
+### END RULES ###
 
 ### LOGGING ###
 -A ufw6-after-logging-input -j LOG --log-prefix \"[UFW BLOCK] \" -m limit --limit 3/min --limit-burst 10
@@ -154,8 +154,7 @@ COMMIT
 -A ufw6-user-limit -j REJECT
 -A ufw6-user-limit-accept -j ACCEPT
 ### END RATE LIMITING ###
-COMMIT
-  ",
+COMMIT",
       order   => '70000'
     }
   }
