@@ -52,8 +52,7 @@ define ufw::allow (
         content => "
 ### tuple ### allow ${proto} ${port} ::/0 any ::/0 in${_interface}
 -A ufw6-before-input${_interface_cmd} -p ${proto} --dport ${port} -j ACCEPT
-
-  ",
+",
         order   => $port
       }
 
