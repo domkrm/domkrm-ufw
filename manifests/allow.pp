@@ -13,48 +13,49 @@ define ufw::allow (
     fail('You must include the UFW base class first')
   }
 
-  $_port_match = inline_template('<%= Regexp.quote(@port) %>')
-
   $_interface = $interface ? {
     ''      => '',
-    default => " on ${interface}"
+    default => "_${interface}"
   }
-
-  $_interface_match = $interface ? {
+  $_interface_cmd = $interface ? {
     ''      => '',
-    default => inline_template('<%= " on " + Regexp.quote(@interface) %>')
+    default => " -i ${interface}"
   }
 
   $_from = $from ? {
+    ''      => '0.0.0.0/0',
+    any     => '0.0.0.0/0',
+    default => $from
+  }
+  $_from_cmd = $from ? {
     ''      => '',
-    default => " from ${from}"
+    'any'   => '',
+    default => " -s ${from}"
   }
-
-  $_from_match = $from ? {
-    ''      => 'Anywhere',
-    'any'   => 'Anywhere',
-    default => inline_template('<%= Regexp.quote(@from) %>')
-  }
-
-  $_rule   = "allow in${_interface} proto ${proto}${_from} to any port ${port}"
-  $_exists = "ufw status | grep -qE '^${_port_match}\\/${proto}${_interface_match} +ALLOW +${_from_match}( +.*)?$'"
 
   if $ensure == 'present' {
 
-    exec { "ufw-allow-${name}":
-      command => "ufw ${_rule}",
-      unless  => $_exists,
-      path    => '/bin:/usr/bin:/sbin:/usr/sbin',
-      require => Package['ufw']
+    concat::fragment { "${ufw::user_rules_file}-${name}":
+      target  => $ufw::user_rules_file,
+      content => "
+### tuple ### allow ${proto} ${port} 0.0.0.0/0 any ${_from} in${_interface}
+-A ufw-before-input${_interface_cmd} -p ${proto} --dport ${port}${_from_cmd} -j ACCEPT
+",
+      order   => $port
     }
 
-  } else {
+    if $ufw::ipv6 and $from == '' {
 
-    exec { "ufw-delete-${name}":
-      command => "ufw delete ${_rule}",
-      onlyif  => $_exists,
-      path    => '/bin:/usr/bin:/sbin:/usr/sbin',
-      require => Package['ufw']
+      # Ignore 'from' option on ipv6
+      concat::fragment { "${ufw::user6_rules_file}-${name}":
+        target  => $ufw::user6_rules_file,
+        content => "
+### tuple ### allow ${proto} ${port} ::/0 any ::/0 in${_interface}
+-A ufw6-before-input${_interface_cmd} -p ${proto} --dport ${port} -j ACCEPT
+",
+        order   => $port
+      }
+
     }
 
   }
